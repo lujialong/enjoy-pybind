@@ -5,22 +5,32 @@ set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_C_COMPILER clang)
 
 #generate by python-config --ldflags
-set(PYTHON_LINK_FLAGS "-L/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/config -lpython2.7 -ldl -framework CoreFoundation")
+#set(PYTHON_LINK_FLAGS "-L/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/config -lpython2.7 -ldl -framework CoreFoundation")
+
+#generate by python3.9-config --ldflags
+set(PYTHON_LINK_FLAGS "-L/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/config-3.9-darwin -ldl -lpython3.9")
+
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${PYTHON_LINK_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_LINK_FLAGS}") 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -std=c++11 -fPIC")
 
 #generate by python-config --cflags
-set(PYTHON_CFLAGS "-iwithsysroot /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -iwithsysroot /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -fno-strict-aliasing -fno-common -dynamic -g -Os -pipe -fno-common -fno-strict-aliasing -fwrapv -DENABLE_DTRACE -DMACOSX -DNDEBUG -Wall -Wstrict-prototypes -Wshorten-64-to-32 -iwithsysroot /usr/local/libressl/include -DNDEBUG -g -fwrapv -Os -Wall -Wstrict-prototypes -DENABLE_DTRACE")
+#set(PYTHON_CFLAGS "-iwithsysroot /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -iwithsysroot /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -fno-strict-aliasing -fno-common -dynamic -g -Os -pipe -fno-common -fno-strict-aliasing -fwrapv -DENABLE_DTRACE -DMACOSX -DNDEBUG -Wall -Wstrict-prototypes -Wshorten-64-to-32 -iwithsysroot /usr/local/libressl/include -DNDEBUG -g -fwrapv -Os -Wall -Wstrict-prototypes -DENABLE_DTRACE")
+
+#generate by python3.9-config --cflags
+set(PYTHON_CFLAGS "-I/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/include/python3.9 -I/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/include/python3.9 -Wno-unused-result -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -fwrapv -O3 -Wall -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PYTHON_CFLAGS}")
 
-add_library(first_pybind11 SHARED examples/first_pybind11.cpp)
-target_include_directories(first_pybind11 PRIVATE ./pybind11/include)
+add_library(example SHARED examples/first_pybind11.cpp)
+target_include_directories(example PRIVATE ./pybind11/include)
+
+#SUFFIX is get from pothon3.9-config --extension-suffix
+set_target_properties(example PROPERTIES PREFIX "" SUFFIX ".cpython-39-darwin.so")
 
 #for Mac python3, install by homebrew
-#target_include_directories(first_pybind11 PRIVATE /usr/local/Frameworks/Python.framework/Versions/3.9/Headers/)
+target_include_directories(example PRIVATE /usr/local/Frameworks/Python.framework/Versions/3.9/Headers/)
 
 #form Mac python2.7
-target_include_directories(first_pybind11 PRIVATE /System/Library/Frameworks/Python.framework/Versions/2.7/Headers/)
+#target_include_directories(example PRIVATE /System/Library/Frameworks/Python.framework/Versions/2.7/Headers/)
