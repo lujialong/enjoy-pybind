@@ -1,0 +1,1 @@
+g++ examples/first_pybind11.cpp -Ipybind11/include -I /System/Library/Frameworks/Python.framework/Versions/2.7/Headers/ -std=c++11 -L/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/config -lpython2.7 -shared
